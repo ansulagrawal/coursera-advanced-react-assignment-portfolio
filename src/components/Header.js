@@ -107,7 +107,7 @@ const Header = () => {
                 Projects
               </Link>
               <Link href="#contact-me" onClick={event => handleClick(event, "contactme")}>
-                Projects
+                Contact Me
               </Link>
             </HStack>
           </nav>
