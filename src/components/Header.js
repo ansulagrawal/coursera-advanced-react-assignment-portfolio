@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faLinkedin, faMedium, faStackOverflow } from "@fortawesome/free-brands-svg-icons";
-import { Box, HStack, Link, ListItem, OrderedList, Text, UnorderedList } from "@chakra-ui/react";
+import { Box, Button, HStack, Link, Text } from "@chakra-ui/react";
 
 const socials = [
   {
@@ -43,7 +43,30 @@ const MenuItem = ({ children, isLast, to = "/", ...rest }) => {
 };
 
 const Header = () => {
-  const handleClick = anchor => () => {
+  const [isHidden, setIsHidden] = useState(false);
+  const prevScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (prevScrollY.current < currentScrollY && !isHidden) {
+        setIsHidden(true);
+      } else if (prevScrollY.current > currentScrollY && isHidden) {
+        setIsHidden(false);
+      }
+
+      prevScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isHidden]);
+
+  const handleClick = (event, anchor) => {
     const id = `${anchor}-section`;
     const element = document.getElementById(id);
     if (element) {
@@ -64,7 +87,9 @@ const Header = () => {
       transitionProperty="transform"
       transitionDuration=".3s"
       transitionTimingFunction="ease-in-out"
-      backgroundColor="#18181b">
+      backgroundColor="#18181b"
+      transform={isHidden ? "translateY(-60px)" : "translateY(0)"}
+      style={{ zIndex: 999 }}>
       <Box color="white" maxWidth="1280px" margin="0 auto">
         <HStack px={16} py={4} justifyContent="space-between" alignItems="center">
           <nav>
@@ -78,12 +103,12 @@ const Header = () => {
           </nav>
           <nav>
             <HStack spacing="24px">
-              {/* Add links to Projects and Contact me section */}
-
-              <MenuItem to="/projects">
+              <Link href="#projects" onClick={event => handleClick(event, "projects")}>
                 Projects
-              </MenuItem>
-              <MenuItem to="/contact">Contact Me</MenuItem>
+              </Link>
+              <Link href="#contact-me" onClick={event => handleClick(event, "contactme")}>
+                Projects
+              </Link>
             </HStack>
           </nav>
         </HStack>
